@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKS - Catálogo Sneakers Venezuela</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            background: #ff5733;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .location {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff5733;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        /* Cart Dropdown */
+        .cart-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            width: 350px;
+            padding: 1.5rem;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .cart-dropdown.show {
+            display: block;
+        }
+        
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cart-item-details {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .cart-item-price {
+            font-weight: bold;
+            color: #ff5733;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            padding-top: 1rem;
+            border-top: 2px solid #333;
+        }
+        
+        .btn-checkout {
+            background: #ff5733;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-checkout:hover {
+            background: #e64a2a;
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: #ff5733;
+            margin: 0.5rem auto;
+        }
+        
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            background: #f8f8f8;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-price {
+            font-size: 1.5rem;
+            color: #ff5733;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .selector-group {
+            margin-bottom: 1rem;
+        }
+        
+        .selector-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .size-selector, .color-selector {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .size-selector:focus, .color-selector:focus {
+            border-color: #ff5733;
+            outline: none;
+        }
+        
+        .stock-status {
+            padding: 0.5rem;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .stock-available {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .stock-low {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .btn-add-cart {
+            background: #ff5733;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-add-cart:hover:not(:disabled) {
+            background: #e64a2a;
+            transform: scale(1.02);
+        }
+        
+        .btn-add-cart:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* 360 Viewer Section */
+        .viewer-360-section {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .viewer-360 {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .viewer-container {
+            position: relative;
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .viewer-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            cursor: grab;
+            user-select: none;
+        }
+        
+        .viewer-image:active {
+            cursor: grabbing;
+        }
+        
+        .viewer-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .viewer-btn {
+            background: #1a1a2e;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .viewer-btn:hover {
+            background: #ff5733;
+            transform: scale(1.1);
+        }
+        
+        .angle-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .angle-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .angle-thumb {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .angle-thumb:hover {
+            border-color: #ff5733;
+        }
+        
+        .angle-thumb.active {
+            border-color: #1a1a2e;
+            transform: scale(1.05);
+        }
+        
+        .viewer-hint {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        
+        /* Checkout Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #ff5733;
+            outline: none;
+        }
+        
+        .order-summary {
+            background: #f8f8f8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #333;
+            color: #ff5733;
+        }
+        
+        .btn-submit {
+            background: #25d366;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 1.2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-submit:hover {
+            background: #128c7e;
+            transform: scale(1.02);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .angle-thumbnails {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .cart-dropdown {
+                right: 1rem;
+                width: calc(100% - 2rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">K</div>
+            <span>KICKS</span>
+        </div>
+        <div class="location">🇻 VNZLA</div>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </header>
+    
+    <!-- Cart Dropdown -->
+    <div class="cart-dropdown" id="cartDropdown">
+        <h3 style="margin-bottom: 1rem;">Tu Carrito</h3>
+        <div id="cartItems"></div>
+        <div class="cart-total">
+            <span>Total:</span>
+            <span id="cartTotal">$0.00</span>
+        </div>
+        <button class="btn-checkout" onclick="openCheckout()">Continuar Compra</button>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Products Section -->
+        <h2 class="section-title">🔥 Catálogo de Sneakers</h2>
+        
+        <div class="products-grid" id="productsGrid">
+            <!-- Product 1: Nike Air Max 90 -->
+            <div class="product-card" data-id="1" data-name="Nike Air Max 90" data-price="85">
+                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop" 
+                     alt="Nike Air Max 90" 
+                     class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Nike Air Max 90</h3>
+                    <div class="product-price">$85.00</div>
+                    
+                    <div class="selector-group">
+                        <label class="selector-label">Talla:</label>
+                        <select class="size-selector" onchange="updateColors('1')">
+                            <option value="">Seleccionar talla</option>
+                            <option value="38">38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                            <option value="42">42</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group" id="colorGroup-1" style="display:none">
+                        <label class="selector-label">Color:</label>
+                        <select class="color-selector" onchange="checkStock('1')">
+                            <option value="">Seleccionar color</option>
+                            <option value="Rojo" data-stock="12">Rojo (12 disp)</option>
+                            <option value="Negro" data-stock="8">Negro (8 disp)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="stock-1" class="stock-status stock-available" style="display:none">
+                        ✓ Disponible
+                    </div>
+                    
+                    <button class="btn-add-cart" onclick="addToCart('1')" disabled>
+                        AGREGAR AL CARRITO
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Product 2: Jordan 1 Retro -->
+            <div class="product-card" data-id="2" data-name="Jordan 1 Retro High" data-price="120">
+                <img src="https://images.unsplash.com/photo-1556906781-9a412961d289?w=600&h=600&fit=crop" 
+                     alt="Jordan 1 Retro" 
+                     class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Jordan 1 Retro High</h3>
+                    <div class="product-price">$120.00</div>
+                    
+                    <div class="selector-group">
+                        <label class="selector-label">Talla:</label>
+                        <select class="size-selector" onchange="updateColors('2')">
+                            <option value="">Seleccionar talla</option>
+                            <option value="38">38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                            <option value="42">42</option>
+                            <option value="43">43</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group" id="colorGroup-2" style="display:none">
+                        <label class="selector-label">Color:</label>
+                        <select class="color-selector" onchange="checkStock('2')">
+                            <option value="">Seleccionar color</option>
+                            <option value="Blanco/Negro" data-stock="7">Blanco/Negro (7 disp)</option>
+                            <option value="Rojo/Negro" data-stock="5">Rojo/Negro (5 disp)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="stock-2" class="stock-status stock-available" style="display:none">
+                        ✓ Disponible
+                    </div>
+                    
+                    <button class="btn-add-cart" onclick="addToCart('2')" disabled>
+                        AGREGAR AL CARRITO
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Product 3: Adidas Yeezy -->
+            <div class="product-card" data-id="3" data-name="Adidas Yeezy Boost 350" data-price="150">
+                <img src="https://images.unsplash.com/photo-1606850848489-208cf887a62b?w=600&h=600&fit=crop" 
+                     alt="Yeezy Boost 350" 
+                     class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">Adidas Yeezy Boost 350</h3>
+                    <div class="product-price">$150.00</div>
+                    
+                    <div class="selector-group">
+                        <label class="selector-label">Talla:</label>
+                        <select class="size-selector" onchange="updateColors('3')">
+                            <option value="">Seleccionar talla</option>
+                            <option value="37">37</option>
+                            <option value="38">38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group" id="colorGroup-3" style="display:none">
+                        <label class="selector-label">Color:</label>
+                        <select class="color-selector" onchange="checkStock('3')">
+                            <option value="">Seleccionar color</option>
+                            <option value="Beige" data-stock="3">Beige (3 disp)</option>
+                            <option value="Gris" data-stock="6">Gris (6 disp)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="stock-3" class="stock-status stock-low" style="display:none">
+                        ⚠ Stock Limitado
+                    </div>
+                    
+                    <button class="btn-add-cart" onclick="addToCart('3')" disabled>
+                        AGREGAR AL CARRITO
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Product 4: New Balance 550 -->
+            <div class="product-card" data-id="4" data-name="New Balance 550" data-price="95">
+                <img src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=600&h=600&fit=crop" 
+                     alt="New Balance 550" 
+                     class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">New Balance 550</h3>
+                    <div class="product-price">$95.00</div>
+                    
+                    <div class="selector-group">
+                        <label class="selector-label">Talla:</label>
+                        <select class="size-selector" onchange="updateColors('4')">
+                            <option value="">Seleccionar talla</option>
+                            <option value="38">38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                            <option value="42">42</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group" id="colorGroup-4" style="display:none">
+                        <label class="selector-label">Color:</label>
+                        <select class="color-selector" onchange="checkStock('4')">
+                            <option value="">Seleccionar color</option>
+                            <option value="Blanco/Verde" data-stock="10">Blanco/Verde (10 disp)</option>
+                            <option value="Blanco/Azul" data-stock="8">Blanco/Azul (8 disp)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="stock-4" class="stock-status stock-available" style="display:none">
+                        ✓ Disponible
+                    </div>
+                    
+                    <button class="btn-add-cart" onclick="addToCart('4')" disabled>
+                        AGREGAR AL CARRITO
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 360 Viewer Section -->
+        <div class="viewer-360-section">
+            <h2 class="section-title">🔄 Vista 360° - Nike Air Max 90</h2>
+            
+            <div class="viewer-360">
+                <div class="viewer-container">
+                    <img id="viewerImage" 
+                         src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop" 
+                         alt="Vista 360°" 
+                         class="viewer-image">
+                    
+                    <div class="viewer-controls">
+                        <button class="viewer-btn" onclick="rotate360('left')">⟲</button>
+                        <span class="angle-indicator" id="angleDisplay">0°</span>
+                        <button class="viewer-btn" onclick="rotate360('right')">⟳</button>
+                    </div>
+                    
+                    <div class="angle-thumbnails">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=150&h=150&fit=crop" 
+                             onclick="setAngle(0)" class="angle-thumb active" data-angle="0">
+                        <img src="https://images.unsplash.com/photo-1556906781-9a412961d289?w=150&h=150&fit=crop" 
+                             onclick="setAngle(45)" class="angle-thumb" data-angle="45">
+                        <img src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=150&h=150&fit=crop" 
+                             onclick="setAngle(90)" class="angle-thumb" data-angle="90">
+                        <img src="https://images.unsplash.com/photo-1606850848489-208cf887a62b?w=150&h=150&fit=crop" 
+                             onclick="setAngle(135)" class="angle-thumb" data-angle="135">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=150&h=150&fit=crop" 
+                             onclick="setAngle(180)" class="angle-thumb" data-angle="180">
+                        <img src="https://images.unsplash.com/photo-1556906781-9a412961d289?w=150&h=150&fit=crop" 
+                             onclick="setAngle(225)" class="angle-thumb" data-angle="225">
+                        <img src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=150&h=150&fit=crop" 
+                             onclick="setAngle(270)" class="angle-thumb" data-angle="270">
+                        <img src="https://images.unsplash.com/photo-1606850848489-208cf887a62b?w=150&h=150&fit=crop" 
+                             onclick="setAngle(315)" class="angle-thumb" data-angle="315">
+                    </div>
+                    
+                    <p class="viewer-hint">👆 Arrastra la imagen para rotar • Usa los botones o thumbnails</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCheckout()">✕</button>
+            <h2 style="margin-bottom: 1.5rem;">📦 Finalizar Compra</h2>
+            
+            <div class="form-group">
+                <label for="nombre">Nombre Completo *</label>
+                <input type="text" id="nombre" placeholder="Tu nombre completo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">Teléfono / WhatsApp *</label>
+                <input type="tel" id="telefono" placeholder="Ej: 0412-1234567" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" placeholder="tu@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="direccion">Dirección de Entrega *</label>
+                <textarea id="direccion" rows="3" placeholder="Dirección completa" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="envio">Método de Envío *</label>
+                <select id="envio" required>
+                    <option value="">Seleccionar método de envío</option>
+                    <option value="mrw">Envío por MRW (Cobro a Destino)</option>
+                    <option value="zoom">Envío por ZOOM (Cobro a Destino)</option>
+                    <option value="retiro">Retiro en Tienda Física</option>
+                    <option value="delivery">Delivery Motorizado (Local)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pago">Método de Pago *</label>
+                <select id="pago" required>
+                    <option value="">Método de pago</option>
+                    <option value="zelle">Zelle / Binance (Recomendado)</option>
+                    <option value="pago_movil">Pago Móvil (Bs)</option>
+                    <option value="efectivo">Efectivo en Tienda</option>
+                </select>
+            </div>
+            
+            <div class="order-summary">
+                <h3 style="margin-bottom: 1rem;">Resumen del Pedido</h3>
+                <div id="orderItems"></div>
+                <div class="order-total">
+                    <span>Total:</span>
+                    <span id="orderTotal">$0.00</span>
+                </div>
+            </div>
+            
+            <button class="btn-submit" onclick="submitOrder()">
+                📱 ENVIAR PEDIDO POR WHATSAPP
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Global State
+        let cart = [];
+        let currentAngle = 0;
+        let isDragging = false;
+        let startX = 0;
+        
+        // Cart Functions
+        function toggleCart() {
+            document.getElementById('cartDropdown').classList.toggle('show');
+        }
+        
+        function updateColors(productId) {
+            const card = document.querySelector(`[data-id="${productId}"]`);
+            const sizeSelect = card.querySelector('.size-selector');
+            const colorGroup = document.getElementById(`colorGroup-${productId}`);
+            const selectedSize = sizeSelect.value;
+            
+            if (selectedSize) {
+                colorGroup.style.display = 'block';
+            } else {
+                colorGroup.style.display = 'none';
+                document.getElementById(`stock-${productId}`).style.display = 'none';
+                card.querySelector('.btn-add-cart').disabled = true;
+            }
+        }
+        
+        function checkStock(productId) {
+            const card = document.querySelector(`[data-id="${productId}"]`);
+            const colorSelect = card.querySelector('.color-selector');
+            const selectedOption = colorSelect.options[colorSelect.selectedIndex];
+            const stock = parseInt(selectedOption.dataset.stock) || 0;
+            const stockDiv = document.getElementById(`stock-${productId}`);
+            const btn = card.querySelector('.btn-add-cart');
+            
+            if (stock > 0) {
+                stockDiv.style.display = 'block';
+                if (stock <= 3) {
+                    stockDiv.className = 'stock-status stock-low';
+                    stockDiv.textContent = '⚠ Stock Limitado';
+                } else {
+                    stockDiv.className = 'stock-status stock-available';
+                    stockDiv.textContent = `✓ ${stock} pares disponibles`;
+                }
+                btn.disabled = false;
+            } else {
+                stockDiv.style.display = 'block';
+                stockDiv.className = 'stock-status';
+                stockDiv.style.background = '#f8d7da';
+                stockDiv.style.color = '#721c24';
+                stockDiv.textContent = '✗ Sin stock';
+                btn.disabled = true;
+            }
+        }
+        
+        function addToCart(productId) {
+            const card = document.querySelector(`[data-id="${productId}"]`);
+            const name = card.dataset.name;
+            const price = parseFloat(card.dataset.price);
+            const sizeSelect = card.querySelector('.size-selector');
+            const colorSelect = card.querySelector('.color-selector');
+            const size = sizeSelect.value;
+            const color = colorSelect.value;
+            
+            if (!size || !color) {
+                alert('Por favor selecciona talla y color');
+                return;
+            }
+            
+            const existingItem = cart.find(item => 
+                item.productId === productId && 
+                item.size === size && 
+                item.color === color
+            );
+            
+            if (existingItem) {
+                existingItem.qty++;
+            } else {
+                cart.push({
+                    productId,
+                    name,
+                    price,
+                    size,
+                    color,
+                    qty: 1,
+                    image: card.querySelector('.product-image').src
+                });
+            }
+            
+            updateCartUI();
+            alert(`${name} - Talla ${size} - ${color} agregado al carrito`);
+        }
+        
+        function updateCartUI() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            cartCount.textContent = totalItems;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">Tu carrito está vacío</p>';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-details">Talla: ${item.size} • Color: ${item.color}</div>
+                            <div class="cart-item-price">$${item.price} x ${item.qty}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            cartTotal.textContent = `$${total.toFixed(2)}`;
+        }
+        
+        // Checkout Functions
+        function openCheckout() {
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+            
+            document.getElementById('cartDropdown').classList.remove('show');
+            
+            const orderItems = document.getElementById('orderItems');
+            orderItems.innerHTML = cart.map(item => `
+                <div class="order-item">
+                    <div>
+                        <div>${item.name}</div>
+                        <div style="font-size: 0.85rem; color: #666;">Talla: ${item.size} • Color: ${item.color} x${item.qty}</div>
+                    </div>
+                    <div>$${(item.price * item.qty).toFixed(2)}</div>
+                </div>
+            `).join('');
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
+            
+            document.getElementById('checkoutModal').classList.add('show');
+        }
+        
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('show');
+        }
+        
+        function submitOrder() {
+            const nombre = document.getElementById('nombre').value;
+            const telefono = document.getElementById('telefono').value;
+            const email = document.getElementById('email').value;
+            const direccion = document.getElementById('direccion').value;
+            const envio = document.getElementById('envio').value;
+            const pago = document.getElementById('pago').value;
+            
+            if (!nombre || !telefono || !direccion || !envio || !pago) {
+                alert('Por favor completa todos los campos obligatorios');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            let message = `🛍️ *NUEVO PEDIDO - KICKS VNZLA*\n\n`;
+            message += `👤 *Cliente:* ${nombre}\n`;
+            message += `📱 *Teléfono:* ${telefono}\n`;
+            if (email) message += `📧 *Email:* ${email}\n`;
+            message += `🚚 *Envío:* ${envio}\n`;
+            message += `💳 *Pago:* ${pago}\n`;
+            message += `📍 *Dirección:* ${direccion}\n\n`;
+            message += `📦 *PRODUCTOS:*\n`;
+            
+            cart.forEach(item => {
+                message += `• ${item.name}\n`;
+                message += `  Talla: ${item.size} | Color: ${item.color}\n`;
+                message += `  $${item.price} x ${item.qty} = $${(item.price * item.qty).toFixed(2)}\n\n`;
+            });
+            
+            message += `💰 *TOTAL: $${total.toFixed(2)}*\n\n`;
+            message += `⏳ *Estado:* Pendiente de verificación de pago`;
+            
+            const ownerPhone = '584123456789';
+            const whatsappUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            
+            cart = [];
+            updateCartUI();
+            closeCheckout();
+            
+            alert('✅ Pedido enviado correctamente. El dueño verificará tu pago y te contactará.');
+        }
+        
+        // 360 Viewer Functions
+        const viewerImage = document.getElementById('viewerImage');
+        const angleImages = [
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1556906781-9a412961d289?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1606850848489-208cf887a62b?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1556906781-9a412961d289?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1606850848489-208cf887a62b?w=800&h=600&fit=crop'
+        ];
+        
+        function setAngle(angle) {
+            currentAngle = angle;
+            const index = Math.floor(angle / 45);
+            viewerImage.src = angleImages[index];
+            document.getElementById('angleDisplay').textContent = `${angle}°`;
+            
+            document.querySelectorAll('.angle-thumb').forEach((thumb, idx) => {
+                thumb.classList.toggle('active', idx === index);
+            });
+        }
+        
+        function rotate360(direction) {
+            if (direction === 'left') {
+                currentAngle = (currentAngle - 45 + 360) % 360;
+            } else {
+                currentAngle = (currentAngle + 45) % 360;
+            }
+            setAngle(currentAngle);
+        }
+        
+        // Drag functionality
+        viewerImage.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            viewerImage.style.cursor = 'grabbing';
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - startX;
+            if (Math.abs(deltaX) > 50) {
+                rotate360(deltaX > 0 ? 'right' : 'left');
+                startX = e.clientX;
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            viewerImage.style.cursor = 'grab';
+        });
+        
+        // Touch support
+        viewerImage.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+        });
+        
+        viewerImage.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.touches[0].clientX - startX;
+            if (Math.abs(deltaX) > 50) {
+                rotate360(deltaX > 0 ? 'right' : 'left');
+                startX = e.touches[0].clientX;
+            }
+        });
+        
+        viewerImage.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+        
+        // Close modals on outside click
+        document.getElementById('checkoutModal').addEventListener('click', (e) => {
+            if (e.target.id === 'checkoutModal') closeCheckout();
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.cart-icon') && !e.target.closest('.cart-dropdown')) {
+                document.getElementById('cartDropdown').classList.remove('show');
+            }
+        });
+        
+        // Initialize
+        updateCartUI();
+    </script>
+</body>
+</html>

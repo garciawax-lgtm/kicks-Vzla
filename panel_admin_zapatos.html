@@ -1,0 +1,479 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --accent:#c8f135;--accent2:#a8d020;
+  --text:#f0f0f0;--muted:#666;--muted2:#444;
+  --red:#ff4444;--green:#22c55e;--yellow:#f59e0b;--blue:#3b82f6;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;display:flex;flex-direction:column}
+/* HEADER */
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--accent);letter-spacing:2px}
+.logo span{color:var(--muted);font-weight:400}
+.header-right{display:flex;align-items:center;gap:12px}
+.badge{background:var(--bg4);border:1px solid var(--border2);padding:4px 10px;font-size:11px;font-family:var(--font-mono);color:var(--muted);border-radius:4px}
+.badge b{color:var(--accent)}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:220px 1fr;flex:1;min-height:0}
+/* SIDEBAR */
+aside{background:var(--bg2);border-right:1px solid var(--border);padding:16px 0}
+.nav-section{padding:8px 16px 4px;font-size:10px;font-family:var(--font-mono);color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(200,241,53,0.05)}
+.nav-item .icon{font-size:15px;width:18px;text-align:center}
+.nav-item .count{margin-left:auto;background:var(--bg4);border:1px solid var(--border);padding:1px 6px;font-size:10px;font-family:var(--font-mono);border-radius:3px}
+/* MAIN */
+main{overflow-y:auto;padding:24px}
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:3px;width:fit-content;margin-bottom:24px}
+.tab{padding:7px 16px;font-size:12px;font-weight:500;cursor:pointer;border-radius:4px;transition:all .15s;color:var(--muted)}
+.tab.active{background:var(--accent);color:#000;font-weight:700}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px}
+.stat-val{font-family:var(--font-mono);font-size:26px;font-weight:700;line-height:1}
+.stat-val.green{color:var(--green)}
+.stat-val.yellow{color:var(--yellow)}
+.stat-val.red{color:var(--red)}
+.stat-val.accent{color:var(--accent)}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.stat-delta{font-size:10px;font-family:var(--font-mono);margin-top:8px;color:var(--green)}
+/* SECTION HEADER */
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-family:var(--font-mono);font-size:13px;font-weight:700;letter-spacing:1px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;border:none;border-radius:5px;transition:all .15s;font-family:var(--font-body)}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--text);color:var(--text)}
+.btn-danger{background:transparent;border:1px solid rgba(255,68,68,.3);color:var(--red)}
+.btn-danger:hover{background:rgba(255,68,68,.1)}
+/* FILTERS */
+.filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:5px 12px;font-size:11px;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;border-radius:4px;transition:all .15s;font-family:var(--font-body)}
+.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(200,241,53,0.08)}
+.search{flex:1;max-width:260px;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;font-size:12px;border-radius:5px;font-family:var(--font-body);outline:none}
+.search:focus{border-color:var(--border2)}
+.search::placeholder{color:var(--muted2)}
+/* PRODUCT TABLE */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--bg3)}
+th{padding:10px 14px;font-size:10px;font-family:var(--font-mono);color:var(--muted);text-align:left;letter-spacing:1px;font-weight:400;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.prod-img{width:44px;height:44px;object-fit:cover;border-radius:4px;background:var(--bg4)}
+.prod-name{font-weight:600;font-size:13px;margin-bottom:2px}
+.prod-id{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+.tallas{display:flex;gap:3px;flex-wrap:wrap}
+.talla-chip{background:var(--bg4);border:1px solid var(--border);padding:2px 6px;font-size:10px;font-family:var(--font-mono);border-radius:3px}
+.talla-chip.out{text-decoration:line-through;opacity:.4}
+.colores{display:flex;gap:4px}
+.color-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15)}
+.status-badge{display:inline-block;padding:3px 8px;font-size:10px;font-weight:700;border-radius:3px;font-family:var(--font-mono)}
+.status-badge.active{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.status-badge.draft{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+.status-badge.out{background:rgba(255,68,68,.1);color:var(--red);border:1px solid rgba(255,68,68,.3)}
+.price{font-family:var(--font-mono);font-weight:700;font-size:14px}
+.actions{display:flex;gap:6px}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;width:600px;max-width:95vw;max-height:90vh;overflow-y:auto;padding:28px}
+.modal-title{font-family:var(--font-mono);font-size:16px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between}
+.modal-title .close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:10px;font-family:var(--font-mono);color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.form-input{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 12px;font-size:13px;border-radius:5px;font-family:var(--font-body);outline:none;transition:border .15s}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--muted2)}
+select.form-input option{background:var(--bg3)}
+/* TALLAS SELECTOR */
+.tallas-selector{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.talla-toggle{padding:6px 10px;font-size:11px;font-family:var(--font-mono);border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;border-radius:4px;transition:all .15s}
+.talla-toggle.sel{border-color:var(--accent);color:var(--accent);background:rgba(200,241,53,0.1)}
+/* COLORES SELECTOR */
+.colors-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.color-opt{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.color-swatch{width:28px;height:28px;border-radius:50%;border:2px solid transparent;transition:all .15s}
+.color-opt.sel .color-swatch{border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,241,53,.3)}
+.color-name{font-size:9px;font-family:var(--font-mono);color:var(--muted)}
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:16px 0}
+/* EMPTY */
+.empty{padding:48px;text-align:center;color:var(--muted);font-size:13px}
+/* PEDIDOS */
+.pedido-row{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:120px 1fr auto auto;gap:16px;align-items:center}
+.pedido-id{font-family:var(--font-mono);font-size:12px;color:var(--accent)}
+.pedido-info{font-size:13px}
+.pedido-info .cliente{font-weight:600}
+.pedido-info .detalle{font-size:11px;color:var(--muted);margin-top:2px}
+.pedido-total{font-family:var(--font-mono);font-weight:700;font-size:16px;text-align:right}
+/* SCROLL */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">KICKS<span>/</span>ADMIN</div>
+  <div class="header-right">
+    <div class="badge">Inventario: <b>24</b> pares</div>
+    <div class="badge">Pedidos hoy: <b>7</b></div>
+    <div class="badge" style="color:var(--green);border-color:rgba(34,197,94,.3)">● ONLINE</div>
+  </div>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="nav-section">Principal</div>
+  <div class="nav-item active" onclick="showTab('productos')"><span class="icon">👟</span> Productos <span class="count" style="color:var(--accent)">12</span></div>
+  <div class="nav-item" onclick="showTab('pedidos')"><span class="icon">📦</span> Pedidos <span class="count" style="color:var(--yellow)">7</span></div>
+  <div class="nav-section" style="margin-top:16px">Inventario</div>
+  <div class="nav-item" onclick="showTab('tallas')"><span class="icon">📏</span> Tallas</div>
+  <div class="nav-item" onclick="showTab('colores')"><span class="icon">🎨</span> Colores</div>
+  <div class="nav-section" style="margin-top:16px">Config</div>
+  <div class="nav-item"><span class="icon">⚙️</span> Ajustes</div>
+  <div class="nav-item"><span class="icon">🔗</span> Webhooks</div>
+</aside>
+
+<main id="mainContent">
+</main>
+</div>
+
+<!-- MODAL AGREGAR/EDITAR -->
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal">
+  <div class="modal-title">
+    <span id="modalTitle">NUEVO PRODUCTO</span>
+    <button class="close" onclick="closeModal()">✕</button>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-group full" style="grid-column:1/-1">
+      <label>Nombre del producto</label>
+      <input class="form-input" placeholder="Ej: Jordan 1 Retro High Chicago" id="f-nombre">
+    </div>
+    <div class="form-group">
+      <label>Precio (USD)</label>
+      <input class="form-input" type="number" placeholder="85.00" id="f-precio">
+    </div>
+    <div class="form-group">
+      <label>Categoria</label>
+      <select class="form-input" id="f-cat">
+        <option>Jordan</option>
+        <option>Yeezy</option>
+        <option>Nike</option>
+        <option>Adidas</option>
+        <option>Lifestyle</option>
+      </select>
+    </div>
+    <div class="form-group" style="grid-column:1/-1">
+      <label>URL de imagen</label>
+      <input class="form-input" placeholder="https://..." id="f-img">
+    </div>
+    <div class="form-group" style="grid-column:1/-1">
+      <label>Descripcion</label>
+      <input class="form-input" placeholder="Colorway, materiales, detalles..." id="f-desc">
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="form-group" style="margin-bottom:14px">
+    <label>Tallas disponibles</label>
+    <div class="tallas-selector" id="tallasSelector">
+      <button class="talla-toggle" onclick="toggleTalla(this)">36</button>
+      <button class="talla-toggle" onclick="toggleTalla(this)">37</button>
+      <button class="talla-toggle" onclick="toggleTalla(this)">38</button>
+      <button class="talla-toggle" onclick="toggleTalla(this)">39</button>
+      <button class="talla-toggle sel" onclick="toggleTalla(this)">40</button>
+      <button class="talla-toggle sel" onclick="toggleTalla(this)">41</button>
+      <button class="talla-toggle sel" onclick="toggleTalla(this)">42</button>
+      <button class="talla-toggle sel" onclick="toggleTalla(this)">43</button>
+      <button class="talla-toggle" onclick="toggleTalla(this)">44</button>
+      <button class="talla-toggle" onclick="toggleTalla(this)">45</button>
+    </div>
+  </div>
+
+  <div class="form-group" style="margin-bottom:20px">
+    <label>Colores disponibles</label>
+    <div class="colors-row" id="colorsSelector">
+      <div class="color-opt sel" onclick="toggleColor(this)"><div class="color-swatch" style="background:#fff"></div><span class="color-name">Blanco</span></div>
+      <div class="color-opt" onclick="toggleColor(this)"><div class="color-swatch" style="background:#111"></div><span class="color-name">Negro</span></div>
+      <div class="color-opt" onclick="toggleColor(this)"><div class="color-swatch" style="background:#c8321a"></div><span class="color-name">Rojo</span></div>
+      <div class="color-opt" onclick="toggleColor(this)"><div class="color-swatch" style="background:#3b5fc0"></div><span class="color-name">Azul</span></div>
+      <div class="color-opt sel" onclick="toggleColor(this)"><div class="color-swatch" style="background:#e8c87a"></div><span class="color-name">Camel</span></div>
+      <div class="color-opt" onclick="toggleColor(this)"><div class="color-swatch" style="background:#7cb87a"></div><span class="color-name">Verde</span></div>
+      <div class="color-opt" onclick="toggleColor(this)"><div class="color-swatch" style="background:#c084fc"></div><span class="color-name">Morado</span></div>
+      <div class="color-opt" onclick="toggleColor(this)"><div class="color-swatch" style="background:#f97316"></div><span class="color-name">Naranja</span></div>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Estado</label>
+      <select class="form-input" id="f-status">
+        <option value="active">Activo (visible)</option>
+        <option value="draft">Borrador (oculto)</option>
+        <option value="out">Sin stock</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Badge / Etiqueta</label>
+      <input class="form-input" placeholder="HYPE, NUEVO, RESTOCK..." id="f-badge">
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="saveProduct()">GUARDAR PRODUCTO</button>
+  </div>
+</div>
+</div>
+
+<script>
+const PRODUCTOS = [
+  {id:'KCK-001',name:'JORDAN 1 RETRO HIGH',cat:'Jordan',price:85,status:'active',badge:'HYPE',
+   tallas:['40','41','42','43'],colores:['#fff','#111','#c8321a'],img:'https://images.unsplash.com/photo-1597045566677-8cf032ed6634?q=80&w=80&auto=format&fit=crop'},
+  {id:'KCK-002',name:'YEEZY BOOST 350 V2',cat:'Yeezy',price:90,status:'active',badge:'RESTOCK',
+   tallas:['38','39','40','41','42'],colores:['#f5f5f5','#111'],img:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=80&auto=format&fit=crop'},
+  {id:'KCK-003',name:'NIKE AIR FORCE 1 LOW',cat:'Nike',price:60,status:'active',badge:'MÁS VENDIDO',
+   tallas:['37','38','39','40','41','42','43','44'],colores:['#fff'],img:'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=80&auto=format&fit=crop'},
+  {id:'KCK-004',name:'JORDAN 4 RETRO',cat:'Jordan',price:95,status:'active',badge:null,
+   tallas:['41','42','43','44','45'],colores:['#111','#e8c87a'],img:'https://images.unsplash.com/photo-1620023473215-689e472648fb?q=80&w=80&auto=format&fit=crop'},
+  {id:'KCK-005',name:'ADIDAS SAMBA OG',cat:'Adidas',price:75,status:'draft',badge:'NUEVO',
+   tallas:['39','40','41','42'],colores:['#fff','#111','#3b5fc0'],img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=80&auto=format&fit=crop'},
+  {id:'KCK-006',name:'NEW BALANCE 550',cat:'Lifestyle',price:70,status:'out',badge:null,
+   tallas:[],colores:['#f5f5f5','#c8321a'],img:'https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=80&auto=format&fit=crop'},
+];
+
+const PEDIDOS = [
+  {id:'KCK-2024-001',cliente:'Carlos Pérez',tel:'58414123456',items:'Jordan 1 Retro High / Talla 42 / Blanco',total:85,status:'pending',hora:'10:32'},
+  {id:'KCK-2024-002',cliente:'María García',tel:'58412987654',items:'Yeezy 350 V2 / Talla 39 / Zebra',total:90,status:'confirmed',hora:'11:15'},
+  {id:'KCK-2024-003',cliente:'Luis Rodríguez',tel:'58416543210',items:'Air Force 1 / Talla 41 / Blanco (x2)',total:120,status:'done',hora:'12:44'},
+  {id:'KCK-2024-004',cliente:'Ana Martínez',tel:'58424111222',items:'Jordan 4 Retro / Talla 43 / Black Cat',total:95,status:'pending',hora:'13:20'},
+  {id:'KCK-2024-005',cliente:'Pedro Blanco',tel:'58426333444',items:'Samba OG / Talla 40 / Azul',total:75,status:'confirmed',hora:'14:05'},
+];
+
+let currentFilter = 'todo';
+let currentTab = 'productos';
+
+function showTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  if(tab === 'productos') renderProductos();
+  else if(tab === 'pedidos') renderPedidos();
+  else if(tab === 'tallas') renderTallas();
+  else renderEmpty(tab);
+}
+
+function renderProductos() {
+  const mc = document.getElementById('mainContent');
+  const cats = ['todo','Jordan','Yeezy','Nike','Adidas','Lifestyle'];
+  const filtered = currentFilter === 'todo' ? PRODUCTOS : PRODUCTOS.filter(p => p.cat === currentFilter);
+
+  mc.innerHTML = `
+  <div class="tabs">
+    <div class="tab active">Todos los productos</div>
+    <div class="tab">Activos</div>
+    <div class="tab">Sin stock</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val accent">${PRODUCTOS.length}</div>
+      <div class="stat-lbl">Total productos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val green">${PRODUCTOS.filter(p=>p.status==='active').length}</div>
+      <div class="stat-lbl">Activos</div>
+      <div class="stat-delta">↑ visibles en tienda</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val yellow">${PRODUCTOS.filter(p=>p.status==='draft').length}</div>
+      <div class="stat-lbl">Borradores</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val red">${PRODUCTOS.filter(p=>p.status==='out').length}</div>
+      <div class="stat-lbl">Sin stock</div>
+    </div>
+  </div>
+
+  <div class="section-hd">
+    <span class="section-title">INVENTARIO</span>
+    <button class="btn btn-primary" onclick="openModal()">+ NUEVO PRODUCTO</button>
+  </div>
+
+  <div class="filters">
+    ${cats.map(c=>`<button class="filter-btn ${currentFilter===c?'active':''}" onclick="filterCat('${c}')">${c==='todo'?'Todos':c}</button>`).join('')}
+    <input class="search" placeholder="Buscar producto..." oninput="searchProducts(this.value)">
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Categoria</th>
+          <th>Tallas</th>
+          <th>Colores</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="productsBody">
+        ${filtered.map(p => `
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <img src="${p.img}" class="prod-img" onerror="this.style.background='#222';this.src=''">
+              <div>
+                <div class="prod-name">${p.name} ${p.badge?`<span style="background:rgba(200,241,53,.15);color:var(--accent);font-size:9px;padding:1px 5px;border-radius:2px;font-family:var(--font-mono)">${p.badge}</span>`:''}</div>
+                <div class="prod-id">${p.id}</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:12px;color:var(--muted)">${p.cat}</td>
+          <td>
+            <div class="tallas">
+              ${p.tallas.length ? p.tallas.map(t=>`<span class="talla-chip">${t}</span>`).join('') : '<span style="font-size:11px;color:var(--red)">Sin stock</span>'}
+            </div>
+          </td>
+          <td>
+            <div class="colores">
+              ${p.colores.map(c=>`<div class="color-dot" style="background:${c}"></div>`).join('')}
+            </div>
+          </td>
+          <td><span class="price">$${p.price}</span></td>
+          <td><span class="status-badge ${p.status}">${p.status==='active'?'ACTIVO':p.status==='draft'?'BORRADOR':'SIN STOCK'}</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-ghost" onclick="openModal('${p.id}')" style="padding:5px 10px;font-size:11px">Editar</button>
+              <button class="btn btn-danger" style="padding:5px 10px;font-size:11px">✕</button>
+            </div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    ${filtered.length === 0 ? '<div class="empty">No hay productos en esta categoría</div>' : ''}
+  </div>`;
+}
+
+function renderPedidos() {
+  const mc = document.getElementById('mainContent');
+  const stColors = {pending:'yellow',confirmed:'green',done:'blue'};
+  const stLabel = {pending:'PENDIENTE',confirmed:'CONFIRMADO',done:'ENTREGADO'};
+
+  mc.innerHTML = `
+  <div class="stats">
+    <div class="stat"><div class="stat-val accent">${PEDIDOS.length}</div><div class="stat-lbl">Hoy</div></div>
+    <div class="stat"><div class="stat-val yellow">${PEDIDOS.filter(p=>p.status==='pending').length}</div><div class="stat-lbl">Pendientes</div></div>
+    <div class="stat"><div class="stat-val green">${PEDIDOS.filter(p=>p.status==='confirmed').length}</div><div class="stat-lbl">Confirmados</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--blue)">${PEDIDOS.filter(p=>p.status==='done').length}</div><div class="stat-lbl">Entregados</div></div>
+  </div>
+
+  <div class="section-hd">
+    <span class="section-title">PEDIDOS DE HOY</span>
+    <span style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">Total: $${PEDIDOS.reduce((a,p)=>a+p.total,0)}</span>
+  </div>
+
+  ${PEDIDOS.map(p=>`
+  <div class="pedido-row">
+    <div>
+      <div class="pedido-id">${p.id}</div>
+      <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:2px">${p.hora}</div>
+      <span class="status-badge ${p.status==='pending'?'draft':p.status==='confirmed'?'active':'out'}" style="margin-top:6px;display:inline-block">${stLabel[p.status]}</span>
+    </div>
+    <div class="pedido-info">
+      <div class="cliente">${p.cliente}</div>
+      <div class="detalle">${p.items}</div>
+      <div class="detalle" style="margin-top:2px;color:var(--muted2)">📱 ${p.tel}</div>
+    </div>
+    <div class="pedido-total">$${p.total}</div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <button class="btn btn-ghost" style="font-size:10px;padding:4px 10px">Ver</button>
+      ${p.status==='pending'?`<button class="btn btn-primary" style="font-size:10px;padding:4px 10px">Confirmar</button>`:''}
+    </div>
+  </div>`).join('')}`;
+}
+
+function renderTallas() {
+  const mc = document.getElementById('mainContent');
+  mc.innerHTML = `
+  <div class="section-hd"><span class="section-title">STOCK POR TALLA</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Talla</th>${PRODUCTOS.map(p=>`<th style="max-width:120px">${p.name.split(' ').slice(0,2).join(' ')}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${['36','37','38','39','40','41','42','43','44','45'].map(t=>`
+        <tr>
+          <td><span class="talla-chip" style="font-size:12px">${t}</span></td>
+          ${PRODUCTOS.map(p=>`<td>${p.tallas.includes(t)?`<span style="color:var(--green);font-size:12px">✓</span>`:`<span style="color:var(--muted2);font-size:12px">—</span>`}</td>`).join('')}
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderEmpty(tab) {
+  document.getElementById('mainContent').innerHTML = `<div class="empty" style="padding-top:80px">Seccion <b>${tab}</b> — proximamente</div>`;
+}
+
+function filterCat(cat) {
+  currentFilter = cat;
+  renderProductos();
+}
+
+function searchProducts(q) {
+  const rows = document.querySelectorAll('#productsBody tr');
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function openModal(id) {
+  document.getElementById('modalTitle').textContent = id ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function toggleTalla(el) { el.classList.toggle('sel'); }
+function toggleColor(el) { el.classList.toggle('sel'); }
+
+function saveProduct() {
+  const n = document.getElementById('f-nombre').value;
+  if(!n.trim()){alert('Ingresa el nombre del producto');return;}
+  closeModal();
+  alert('Producto guardado. En produccion esto guardaria en Supabase via API.');
+}
+
+// Init
+renderProductos();
+</script>
+</body>
+</html>

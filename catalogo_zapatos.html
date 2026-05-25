@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Sneakers - Zapatos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<script>
+// =======================================================
+// ⚙️ CONFIGURACIÓN DEL NEGOCIO (SNEAKERS / URBAN)
+// =======================================================
+const CONFIG = {
+  negocio: {
+    nombre_principal: "KICKS",
+    nombre_resaltado: "VNZLA",
+    prefijo_orden: "KCK",
+    logo_url: "https://cdn-icons-png.flaticon.com/512/3257/3257122.png", // Icono de zapato deportivo
+    moneda: "$"
+  },
+
+  // Colores: Estilo Urbano / Hypebeast (Gris oscuro y Neón)
+  colores: {
+    fondo_sitio: "#0d0d0d",        // Negro profundo
+    fondo_elementos: "#171717",    // Gris oscuro
+    fondo_tarjetas: "#1a1a1a",     // Gris oscuro 2
+    acento_primario: "#00ff66",    // Verde Neón
+    acento_hover: "#00cc52",       // Verde Neón oscuro
+    acento_secundario: "#ffffff",  // Blanco
+    texto_claro: "#f5f5f5",        // Blanco humo
+    texto_secundario: "#888888"    // Gris medio
+  },
+
+  textos: {
+    hero_etiqueta: "🔥 DROPS EXCLUSIVOS 🔥",
+    hero_titulo: "ELEVAMOS TU<br><em>SNEAKER GAME</em>",
+    hero_descripcion: "Las mejores marcas y modelos limitados. Envíos asegurados a toda Venezuela por MRW y ZOOM.",
+    boton_menu: "VER INVENTARIO",
+    insignia_giratoria: "CALIDAD IMPORTADA · ENVÍO NACIONAL MRW · "
+  },
+
+  webhook_url: "https://tu-n8n.com/webhook/pedidos-zapatos",
+
+  categorias: [
+    { id: 'todo', nombre: 'All Kicks' },
+    { id: 'jordan', nombre: 'Jordan' },
+    { id: 'yeezy', nombre: 'Yeezy' },
+    { id: 'lifestyle', nombre: 'Lifestyle / Casual' }
+  ],
+
+  productos: [
+    {id:1,name:'JORDAN 1 RETRO HIGH',img:'https://images.unsplash.com/photo-1597045566677-8cf032ed6634?q=80&w=600&auto=format&fit=crop',desc:'Colorway "Chicago". Tallas disponibles: 40 a 44 (Horma exacta).',price:85.00,cat:'jordan',badge:'HYPE'},
+    {id:2,name:'YEEZY BOOST 350 V2',img:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=600&auto=format&fit=crop',desc:'Colorway "Zebra". Ultra cómodos para el día a día. Tallas: 38 a 43.',price:90.00,cat:'yeezy',badge:'RESTOCK'},
+    {id:3,name:'NIKE AIR FORCE 1 LOW',img:'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=600&auto=format&fit=crop',desc:'Clásico blanco inmaculado. Nunca pasa de moda. Tallas de dama y caballero.',price:60.00,cat:'lifestyle',badge:'MÁS VENDIDO'},
+    {id:4,name:'JORDAN 4 RETRO',img:'https://images.unsplash.com/photo-1620023473215-689e472648fb?q=80&w=600&auto=format&fit=crop',desc:'Colorway "Black Cat". Gamuza premium. Tallas: 41 a 45.',price:95.00,cat:'jordan',badge:null}
+  ]
+};
+</script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font-title: 'Teko', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+body {
+  background-color: var(--bg-site);
+  color: var(--text-claro);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAVBAR URBANO ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 70px;
+  background: rgba(13, 13, 13, 0.85);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-logo {
+  font-family: var(--font-title); font-size: 36px; font-weight: 700; color: var(--acento-secundario);
+  text-decoration: none; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; line-height: 1;
+}
+.nav-logo span { color: var(--acento-primario); }
+
+.cart-btn {
+  background: var(--acento-primario); color: #000; border: none;
+  padding: 10px 20px; font-family: var(--font-body); font-size: 13px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+  text-transform: uppercase; transform: skewX(-10deg);
+}
+.cart-btn:hover { background: var(--acento-secundario); color: #000; }
+.cart-btn span { display: inline-block; transform: skewX(10deg); }
+
+/* ── HERO SNEAKERS ── */
+.hero {
+  min-height: 90vh; padding: 120px 5% 60px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: 'KICKS'; position: absolute; font-family: var(--font-title); font-size: 30vw;
+  color: rgba(255,255,255,0.02); z-index: -1; line-height: 1; top: 20%;
+}
+.hero-tag {
+  display: inline-block; background: rgba(0,255,102,0.1); color: var(--acento-primario);
+  padding: 8px 16px; font-size: 14px; font-weight: 800; letter-spacing: 2px; margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: var(--font-title); font-size: clamp(60px, 10vw, 120px); line-height: 0.85;
+  color: var(--texto-claro); margin-bottom: 20px; text-transform: uppercase;
+}
+.hero h1 em { color: transparent; -webkit-text-stroke: 2px var(--acento-primario); font-style: normal; }
+.hero p {
+  font-size: 16px; color: var(--texto-secundario); line-height: 1.6;
+  max-width: 600px; margin: 0 auto 40px; font-weight: 400;
+}
+.btn-primary {
+  display: inline-block; background: #fff; color: #000;
+  padding: 16px 40px; font-family: var(--font-body); font-size: 14px; font-weight: 800;
+  text-transform: uppercase; text-decoration: none; transition: all 0.3s;
+}
+.btn-primary:hover { background: var(--acento-primario); box-shadow: 0 0 20px rgba(0,255,102,0.4); }
+
+/* ── CATEGORÍAS ── */
+.section { padding: 60px 5%; max-width: 1400px; margin: 0 auto; }
+.cats { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 50px; }
+.cat-btn {
+  background: var(--fondo-elementos); border: 1px solid rgba(255,255,255,0.1); color: var(--texto-secundario);
+  padding: 12px 24px; font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+}
+.cat-btn:hover { background: rgba(255,255,255,0.1); color: #fff;}
+.cat-btn.active { background: #fff; color: #000; border-color: #fff; }
+
+/* ── GRID DE SNEAKERS ── */
+.menu-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+}
+.menu-card {
+  background: var(--fondo-tarjetas); border: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.3s; position: relative; padding: 20px;
+}
+.menu-card:hover { border-color: var(--acento-primario); transform: translateY(-5px); }
+.card-img-wrap { height: 250px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; background: #222;}
+.card-photo { width: 100%; height: 100%; object-fit: cover; }
+.card-badge {
+  position: absolute; top: 20px; right: 20px; z-index: 2;
+  background: var(--acento-primario); color: #000;
+  font-size: 11px; font-weight: 800; padding: 4px 10px; text-transform: uppercase;
+}
+.card-name {
+  font-family: var(--font-title); font-size: 32px; color: var(--texto-claro);
+  margin-bottom: 5px; line-height: 1; text-transform: uppercase;
+}
+.card-desc { font-size: 13px; color: var(--texto-secundario); margin-bottom: 15px; }
+.card-price { font-family: var(--font-title); font-size: 36px; color: var(--acento-secundario); margin-bottom: 15px; line-height: 1;}
+.add-btn {
+  background: rgba(255,255,255,0.1); border: none; color: #fff;
+  padding: 12px; font-size: 14px; font-weight: 600; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: space-between; align-items: center;
+}
+.add-btn:hover { background: var(--acento-primario); color: #000; }
+.add-btn.added { background: #fff; color: #000; }
+
+/* ── CART PANEL ── */
+.cart-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 200;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.cart-overlay.open { opacity: 1; pointer-events: all; }
+.cart-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 450px; max-width: 100vw;
+  background: var(--fondo-elementos); z-index: 201; border-left: 1px solid rgba(255,255,255,0.1);
+  transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column;
+}
+.cart-panel.open { transform: translateX(0); }
+.cart-header {
+  padding: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;
+}
+.cart-title { font-family: var(--font-title); font-size: 36px; color: #fff; line-height: 1;}
+.close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; }
+
+.cart-items { flex: 1; overflow-y: auto; padding: 30px; }
+.cart-item { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;}
+.ci-name { font-family: var(--font-body); font-size: 14px; font-weight: 800; margin-bottom: 5px; text-transform: uppercase;}
+.ci-price { font-family: var(--font-title); font-size: 24px; color: var(--acento-primario); line-height: 1;}
+.ci-qty { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
+.qty-btn { border: 1px solid rgba(255,255,255,0.2); background: transparent; color:#fff; width: 28px; height: 28px; cursor: pointer; }
+.qty-num { font-size: 14px; font-weight: 600; }
+
+/* FORMULARIO ADAPTADO A ENVÍOS NACIONALES */
+.cart-form { padding: 30px; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-site); }
+.form-input {
+  width: 100%; background: var(--fondo-tarjetas); border: 1px solid rgba(255,255,255,0.1);
+  color: #fff; padding: 14px; font-family: var(--font-body); font-size: 13px;
+  margin-bottom: 12px; outline: none; transition: border 0.2s;
+}
+.form-input:focus { border-color: var(--acento-primario); }
+
+.cart-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 10px; }
+.total-label { font-size: 12px; text-transform: uppercase; font-weight: 800; color: var(--texto-secundario); }
+.total-amount { font-family: var(--font-title); font-size: 40px; color: #fff; line-height: 1;}
+
+.checkout-btn {
+  width: 100%; background: var(--acento-primario); border: none; color: #000;
+  padding: 18px; font-family: var(--font-body); font-size: 14px; font-weight: 800;
+  text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+}
+.checkout-btn:hover { background: #fff; }
+
+.fade-in { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo" id="ui-nav-logo">KICKS<span>VNZLA</span></a>
+  <button class="cart-btn" onclick="toggleCart()">
+    <span>CART <span id="cartCount">0</span></span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-content fade-in">
+    <div class="hero-tag" id="ui-hero-tag"></div>
+    <h1 id="ui-hero-title"></h1>
+    <p id="ui-hero-desc"></p>
+    <a href="#menu" class="btn-primary" id="ui-btn-menu"></a>
+  </div>
+</section>
+
+<section class="section" id="menu">
+  <div class="cats" id="cats-container"></div>
+  <div class="menu-grid" id="menuGrid"></div>
+</section>
+
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div class="cart-title">CHECKOUT</div>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-form" id="cartForm" style="display:none">
+    
+    <!-- CAMPOS ESPECIALES PARA ZAPATOS Y ENVÍOS -->
+    <input class="form-input" id="fName" type="text" placeholder="Nombre completo">
+    <input class="form-input" id="fPhone" type="tel" placeholder="WhatsApp">
+    
+    <input class="form-input" id="fTallas" type="text" placeholder="👟 Indica la talla (EUR o US) para cada modelo">
+    
+    <select class="form-input" id="fShipping">
+      <option value="">Método de Envío...</option>
+      <option value="mrw">Envío por MRW (Cobro a Destino)</option>
+      <option value="zoom">Envío por ZOOM (Cobro a Destino)</option>
+      <option value="retiro">Retiro en Tienda Física</option>
+      <option value="delivery">Delivery Motorizado (Local)</option>
+    </select>
+    <input class="form-input" id="fAddress" type="text" placeholder="Dirección exacta o Nombre de Agencia MRW/Zoom">
+    
+    <select class="form-input" id="fPayment">
+      <option value="">Método de Pago...</option>
+      <option value="zelle">Zelle / Binance (Recomendado)</option>
+      <option value="pago_movil">Pago Móvil (Bs)</option>
+      <option value="efectivo">Efectivo en Tienda</option>
+    </select>
+
+    <div class="cart-total">
+      <span class="total-label">Subtotal</span>
+      <span class="total-amount" id="totalAmount">$0.00</span>
+    </div>
+    <button class="checkout-btn" onclick="placeOrder()">ENVIAR PEDIDO POR WHATSAPP</button>
+  </div>
+</div>
+
+<script>
+let cart = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.title = `${CONFIG.negocio.nombre_principal} ${CONFIG.negocio.nombre_resaltado}`;
+
+  const root = document.documentElement;
+  root.style.setProperty('--bg-site', CONFIG.colores.fondo_sitio);
+  root.style.setProperty('--fondo-tarjetas', CONFIG.colores.fondo_tarjetas);
+  root.style.setProperty('--fondo-elementos', CONFIG.colores.fondo_elementos);
+  root.style.setProperty('--acento-primario', CONFIG.colores.acento_primario);
+  root.style.setProperty('--acento-secundario', CONFIG.colores.acento_secundario);
+  root.style.setProperty('--texto-claro', CONFIG.colores.texto_claro);
+  root.style.setProperty('--texto-secundario', CONFIG.colores.texto_secundario);
+
+  document.getElementById('ui-nav-logo').innerHTML = `${CONFIG.negocio.nombre_principal}<span>${CONFIG.negocio.nombre_resaltado}</span>`;
+  document.getElementById('ui-hero-tag').innerHTML = CONFIG.textos.hero_etiqueta;
+  document.getElementById('ui-hero-title').innerHTML = CONFIG.textos.hero_titulo;
+  document.getElementById('ui-hero-desc').innerHTML = CONFIG.textos.hero_descripcion;
+  document.getElementById('ui-btn-menu').innerText = CONFIG.textos.boton_menu;
+
+  document.getElementById('cats-container').innerHTML = CONFIG.categorias.map((c, i) => 
+    `<button class="cat-btn ${i===0?'active':''}" onclick="filterCat('${c.id}',this)">${c.nombre}</button>`
+  ).join('');
+
+  renderMenu();
+});
+
+function renderMenu(filter='all'){
+  const grid = document.getElementById('menuGrid');
+  const items = filter==='all' ? CONFIG.productos : CONFIG.productos.filter(i=>i.cat===filter);
+  grid.innerHTML = items.map(item=>`
+    <div class="menu-card fade-in" data-cat="${item.cat}">
+      <div class="card-img-wrap">
+        ${item.badge?`<div class="card-badge">${item.badge}</div>`:''}
+        <img src="${item.img}" class="card-photo" alt="${item.name}">
+      </div>
+      <div class="card-name">${item.name}</div>
+      <div class="card-desc">${item.desc}</div>
+      <div class="card-price">${CONFIG.negocio.moneda}${item.price.toFixed(2)}</div>
+      <button class="add-btn" id="addbtn-${item.id}" onclick="addToCart(${item.id})">
+        <span>AGREGAR</span> <span>+</span>
+      </button>
+    </div>
+  `).join('');
+  setTimeout(()=>document.querySelectorAll('.fade-in').forEach(el=>{el.classList.add('visible')}),50);
+}
+
+function filterCat(cat,btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(cat);
+}
+
+function addToCart(id){
+  const item = CONFIG.productos.find(i=>i.id===id);
+  if(!item) return;
+  cart[id] = cart[id] ? {...cart[id],qty:cart[id].qty+1} : {item,qty:1};
+  updateCartUI();
+  const btn = document.getElementById('addbtn-'+id);
+  if(btn){btn.classList.add('added'); btn.innerHTML='<span>AGREGADO</span> <span>✓</span>'; setTimeout(()=>{btn.classList.remove('added'); btn.innerHTML='<span>AGREGAR</span> <span>+</span>';},1000)}
+}
+
+function updateCartUI(){
+  const total = Object.values(cart).reduce((s,c)=>s+c.item.price*c.qty,0);
+  const count = Object.values(cart).reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cartCount').textContent=count;
+  document.getElementById('totalAmount').textContent = `${CONFIG.negocio.moneda}${(total).toFixed(2)}`;
+
+  const itemsEl = document.getElementById('cartItems');
+  const formEl = document.getElementById('cartForm');
+
+  if(count===0){
+    itemsEl.innerHTML=`<div style="text-align:center; padding: 40px 0; color: #555;">El carrito está vacío.</div>`;
+    formEl.style.display='none';
+    return;
+  }
+  formEl.style.display='block';
+  itemsEl.innerHTML = Object.values(cart).map(c=>`
+    <div class="cart-item">
+      <div class="ci-info">
+        <div class="ci-name">${c.item.name}</div>
+        <div class="ci-price">${CONFIG.negocio.moneda}${(c.item.price*c.qty).toFixed(2)}</div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${c.item.id},-1)">−</button>
+          <span class="qty-num">${c.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${c.item.id},1)">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function changeQty(id,delta){
+  if(!cart[id]) return;
+  cart[id].qty += delta;
+  if(cart[id].qty <= 0) delete cart[id];
+  updateCartUI();
+}
+
+function toggleCart(){
+  document.getElementById('cartOverlay').classList.toggle('open');
+  document.getElementById('cartPanel').classList.toggle('open');
+}
+
+function placeOrder(){
+  const name=document.getElementById('fName').value.trim();
+  const phone=document.getElementById('fPhone').value.trim();
+  const tallas=document.getElementById('fTallas').value.trim();
+  const shipping=document.getElementById('fShipping').value;
+  const address=document.getElementById('fAddress').value.trim();
+  const payment=document.getElementById('fPayment').value;
+
+  if(!name||!phone||!shipping||!payment||!tallas){
+    alert('Faltan datos. Asegúrate de especificar las tallas y tu método de envío.');
+    return;
+  }
+  
+  const items = Object.values(cart).map(c=>`👟 *${c.qty}x* ${c.item.name} (${CONFIG.negocio.moneda}${(c.item.price*c.qty).toFixed(2)})`).join('%0A');
+  const total = Object.values(cart).reduce((s,c)=>s+c.item.price*c.qty,0).toFixed(2);
+  
+  const text = `🔥 ¡Hola! Quiero confirmar la compra de mis Sneakers:%0A%0A${items}%0A%0A💰 *Total a pagar: ${CONFIG.negocio.moneda}${total}*%0A%0A👤 *Mis datos:*%0ANombre: ${name}%0ATeléfono: ${phone}%0A%0A📏 *Talla especificada:*%0A${tallas}%0A%0A🚚 *Logística:*%0AEnvío por: ${shipping}%0AAgencia/Dirección: ${address}%0A%0A💳 *Pagaré mediante:* ${payment}%0A%0A¿A dónde transfiero?`;
+  
+  window.open(`https://wa.me/1234567890?text=${text}`, '_blank');
+  
+  cart={};
+  updateCartUI();
+  toggleCart();
+}
+
+const observer = new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
